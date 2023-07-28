@@ -102,3 +102,6 @@ import joblib
  # Train the model
  num_epochs = 4
  history = train_model(model, train_dl, val_dl, criterion, optimizer, num_epochs)
+ # Save the trained model
+ model_filename = "custom_resnet_model.joblib"
+ joblib.dump(model.state_dict(), model_filename)
