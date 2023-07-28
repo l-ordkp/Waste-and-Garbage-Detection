@@ -99,3 +99,6 @@ import joblib
         print(f"Epoch {epoch + 1}/{num_epochs}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}")
 
     return history
+ # Train the model
+ num_epochs = 4
+ history = train_model(model, train_dl, val_dl, criterion, optimizer, num_epochs)
