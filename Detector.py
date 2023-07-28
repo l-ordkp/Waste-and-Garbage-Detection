@@ -33,3 +33,19 @@ import joblib
  train_dl = DataLoader(train_ds, batch_size=batch_size, shuffle=True, num_workers=4, pin_memory=True)
  val_dl = DataLoader(val_ds, batch_size=batch_size * 2, num_workers=4, pin_memory=True)
  test_dl = DataLoader(test_ds, batch_size=batch_size * 2, num_workers=4, pin_memory=True)
+
+
+ # Define the model architecture
+ class CustomResNet(nn.Module):
+    def __init__(self, num_classes):
+        super(CustomResNet, self).__init__()
+        self.resnet = models.resnet18(pretrained=True)
+        in_features = self.resnet.fc.in_features
+        self.resnet.fc = nn.Linear(in_features, num_classes)
+
+    def forward(self, x):
+        return self.resnet(x)
+
+# Create the model
+ num_classes = len(dataset.classes)  # Number of output classes
+ model = CustomResNet(num_classes)
