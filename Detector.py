@@ -57,3 +57,45 @@ import joblib
  learning_rate = 0.001
  optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
  criterion = nn.CrossEntropyLoss()
+
+ # Training loop
+ def train_model(model, train_dl, val_dl, criterion, optimizer, num_epochs=10):
+    history = {"train_loss": [], "val_loss": [], "val_acc": []}
+
+    for epoch in range(num_epochs):
+        # Training
+        model.train()
+        train_loss = 0.0
+        for inputs, labels in train_dl:
+            inputs, labels = inputs.to(device), labels.to(device)
+            optimizer.zero_grad()
+            outputs = model(inputs)
+            loss = criterion(outputs, labels)
+            loss.backward()
+            optimizer.step()
+            train_loss += loss.item() * inputs.size(0)
+        train_loss = train_loss / len(train_dl.dataset)
+        history["train_loss"].append(train_loss)
+
+        # Validation
+        model.eval()
+        val_loss = 0.0
+        corrects = 0
+        total = 0
+        with torch.no_grad():
+            for inputs, labels in val_dl:
+                inputs, labels = inputs.to(device), labels.to(device)
+                outputs = model(inputs)
+                loss = criterion(outputs, labels)
+                val_loss += loss.item() * inputs.size(0)
+                _, preds = torch.max(outputs, 1)
+                corrects += torch.sum(preds == labels.data)
+                total += labels.size(0)
+        val_loss = val_loss / len(val_dl.dataset)
+        val_acc = corrects.double() / total
+        history["val_loss"].append(val_loss)
+        history["val_acc"].append(val_acc.item())
+
+        print(f"Epoch {epoch + 1}/{num_epochs}, Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}, Val Acc: {val_acc:.4f}")
+
+    return history
