@@ -49,3 +49,11 @@ import joblib
 # Create the model
  num_classes = len(dataset.classes)  # Number of output classes
  model = CustomResNet(num_classes)
+ # Define the device to be used for computation (CPU)
+ device = torch.device("cpu")
+ model = model.to(device)
+
+ # Define the optimization function and other hyperparameters
+ learning_rate = 0.001
+ optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate)
+ criterion = nn.CrossEntropyLoss()
